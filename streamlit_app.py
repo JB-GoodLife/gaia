@@ -1,5 +1,9 @@
 import streamlit as st
 
+# Set page configuration (must be at the top)
+st.set_page_config(page_title="Tilbudsmodul", layout="centered")
+
+# Initialize session state for authentication.
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
@@ -19,12 +23,9 @@ if not st.session_state["authenticated"]:
                 st.error("Incorrect password!")
 
 if st.session_state["authenticated"]:
-    # Set page configuration
-    st.set_page_config(page_title="Tilbudsmodul", layout="centered")
-
-    # Title
+    # Tilbudsmodul page content
     st.title("Tilbudsmodul")
-
+    
     # --- Udbetaling ---
     st.subheader("Udbetaling")
     col1, col2, col3 = st.columns(3)
@@ -48,7 +49,7 @@ if st.session_state["authenticated"]:
             ["5 år", "10 år", "15 år"],
             index=0
         )
-
+    
     # --- Boligkarakteristika ---
     st.subheader("Boligkarakteristika")
     col4, col5, col6 = st.columns(3)
@@ -72,7 +73,7 @@ if st.session_state["authenticated"]:
             ["Ja", "Nej"],
             index=0
         )
-
+    
     # --- Kundeforhold ---
     st.subheader("Kundeforhold")
     col7, col8 = st.columns(2)
@@ -85,7 +86,7 @@ if st.session_state["authenticated"]:
         )
     with col8:
         postnummer = st.text_input("Postnummer:", "")
-
+    
     # --- Beregn button ---
     beregn = st.button("Beregn")
     if beregn:
