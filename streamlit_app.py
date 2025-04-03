@@ -19,13 +19,74 @@ if not st.session_state["authenticated"]:
                 st.error("Incorrect password!")
 
 if st.session_state["authenticated"]:
-    st.title("Fun Project")
-    st.write("Welcome! Enjoy the fun function below.")
+    # Set page configuration
+    st.set_page_config(page_title="Tilbudsmodul", layout="centered")
 
-    # A simple fun form that reverses the user's input.
-    with st.form("fun_form"):
-        user_input = st.text_input("Enter some text:")
-        submit_button = st.form_submit_button("Submit")
-        if submit_button:
-            result = user_input[::-1]
-            st.success(f"Reversed: {result}")
+    # Title
+    st.title("Tilbudsmodul")
+
+    # --- Udbetaling ---
+    st.subheader("Udbetaling")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        monthly = st.number_input(
+            "Månedlig udbetaling (DKK):",
+            min_value=0,
+            value=0,
+            step=1000
+        )
+    with col2:
+        lump_sum = st.number_input(
+            "Engangsudbetaling (DKK):",
+            min_value=0,
+            value=0,
+            step=1000
+        )
+    with col3:
+        payout_period = st.selectbox(
+            "Udbetalingsperiode:",
+            ["5 år", "10 år", "15 år"],
+            index=0
+        )
+
+    # --- Boligkarakteristika ---
+    st.subheader("Boligkarakteristika")
+    col4, col5, col6 = st.columns(3)
+    with col4:
+        boligvaerdi = st.number_input(
+            "Boligværdi (DKK):",
+            min_value=0,
+            value=5000000,
+            step=100000
+        )
+    with col5:
+        frivaerdi = st.number_input(
+            "Friværdi (DKK):",
+            min_value=0,
+            value=3500000,
+            step=100000
+        )
+    with col6:
+        afdrag = st.selectbox(
+            "Afdrages lånet løbende?",
+            ["Ja", "Nej"],
+            index=0
+        )
+
+    # --- Kundeforhold ---
+    st.subheader("Kundeforhold")
+    col7, col8 = st.columns(2)
+    with col7:
+        alder = st.number_input(
+            "Yngste ejers alder:",
+            min_value=0,
+            value=60,
+            step=1
+        )
+    with col8:
+        postnummer = st.text_input("Postnummer:", "")
+
+    # --- Beregn button ---
+    beregn = st.button("Beregn")
+    if beregn:
+        st.write("Beregning udført!")
