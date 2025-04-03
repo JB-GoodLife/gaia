@@ -52,43 +52,9 @@ with col2:
     st.text("Postnummer:")
     postal_code = st.selectbox("Skriv postnummer", [""], key="postal_code", label_visibility="collapsed")
 
+# Add extra padding before the button
+st.write("")
+st.write("")
+
 # Button at the bottom
 st.button("Beregn", type="primary", use_container_width=True)
-
-# Apply custom CSS to match the design
-st.markdown("""
-<style>
-    /* Make primary button dark green like in the screenshot */
-    .stButton > button[data-baseweb="button"] {
-        background-color: #2c4c3b;
-        color: white;
-        font-weight: 500;
-        padding: 0.75rem 1rem;
-        border-radius: 0.25rem;
-    }
-    
-    /* Adjust header styles */
-    h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-    }
-    
-    h2 {
-        font-size: 1.5rem;
-        font-weight: 500;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    /* Adjust spacing */
-    .stNumberInput, .stSelectbox {
-        background-color: #f0f2f6;
-        border-radius: 0.25rem;
-    }
-    
-    .stMarkdown {
-        margin-top: 2rem;
-    }
-</style>
-""", unsafe_allow_html=True)
