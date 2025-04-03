@@ -1,6 +1,29 @@
 import streamlit as st
 
-# Set page title
+# Initialize session state to track authentication
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+
+# Password authentication function
+def check_password():
+    if st.session_state.password == "TestPass":
+        st.session_state.authenticated = True
+        # Clean up the password field from session state for security
+        del st.session_state.password
+        # Rerun the app to show the main content
+        st.rerun()
+
+# Login screen if not authenticated
+if not st.session_state.authenticated:
+    st.title("Login Required")
+    
+    # Simple password field
+    st.text_input("Enter password", type="password", key="password", on_change=check_password)
+    
+    # Exit early - don't show the main app content
+    st.stop()
+
+# Main app content (only shown after authentication)
 st.title("Tilbudsmodul")
 
 st.markdown("---")
@@ -58,3 +81,8 @@ st.write("")
 
 # Button at the bottom
 st.button("Beregn", type="primary", use_container_width=True)
+
+# Optional logout button (can be placed anywhere in the app)
+if st.sidebar.button("Logout"):
+    st.session_state.authenticated = False
+    st.rerun()
