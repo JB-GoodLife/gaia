@@ -15,11 +15,13 @@ logo_path = BASE_DIR / "assets" / "logo.png"
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
-# Login form with logo on login page
+# Login form with centered logo
 if not st.session_state["authenticated"]:
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        st.image(str(logo_path))
     with st.form("login_form"):
-        st.image(str(logo_path), width=150)
-        st.title("Skriv password (v4)")
+        st.title("Skriv password (v5)")
         password = st.text_input("Password", type="password")
         submit = st.form_submit_button("Login")
         if submit:
@@ -31,17 +33,17 @@ if not st.session_state["authenticated"]:
 
 # Main App Code
 
-# Load JSON data for postnumre
+# Load JSON data
 with open(json_path, encoding="utf-8") as f:
     data = pd.DataFrame(json.load(f))
 postnumre = data["nr"]
 byer = dict(zip(data["nr"], data["navn"]))
 
-# Display header with logo and version counter
-col1, col2, col3 = st.columns([1, 2, 1])
+# Header with centered logo
+col1, col2, col3 = st.columns(3)
 with col2:
-    st.image(str(logo_path), width=200)
-st.title("Tilbudsmodul v4")
+    st.image(str(logo_path))
+st.title("Tilbudsmodul (v5)")
 st.divider()
 
 # Udbetaling Section
@@ -88,7 +90,6 @@ df = df.sort_index()
 # Determine probability message
 besked = ":green[Høj]" if (sum(df["Udbetaling"]) < 1500000) and afdrag else ":red[Lav]"
 
-# Calculate button and output details
 if st.button("Beregn", type="primary", use_container_width=True):
     st.divider()
     st.header(f'Sandsynlighed: {besked}')
