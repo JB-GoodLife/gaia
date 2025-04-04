@@ -12,7 +12,7 @@ login_placeholder = st.empty()
 
 if not st.session_state["authenticated"]:
     with login_placeholder.form("login_form"):
-        st.title("Enter Password")
+        st.title("Skriv password")
         password = st.text_input("Password", type="password")
         submit = st.form_submit_button("Login")
         if submit:
