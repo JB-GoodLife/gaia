@@ -27,8 +27,8 @@ if not st.session_state["authenticated"]:
 if st.session_state["authenticated"]:
     # --- Main App Code ---
     
-    # Setup postnummer dictionary
-    with open('assets\\postnumre.json', encoding='utf-8') as data_file:
+    # Setup postnummer dictionary using forward slashes for paths.
+    with open('assets/postnumre.json', encoding='utf-8') as data_file:
         data = pd.DataFrame(json.load(data_file))
     
     postnumre = data["nr"]
@@ -37,7 +37,7 @@ if st.session_state["authenticated"]:
     # Add logos
     left_co, cent_co, last_co = st.columns(3)
     with cent_co:
-        st.image("assets\\logo.png")
+        st.image("assets/logo.png")
     st.markdown('##')
     
     # App title
