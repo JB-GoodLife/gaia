@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+from pathlib import Path
 
 # Set page configuration (must be at the top)
 st.set_page_config(page_title="Tilbudsmodul", layout="centered")
@@ -27,8 +28,13 @@ if not st.session_state["authenticated"]:
 if st.session_state["authenticated"]:
     # --- Main App Code ---
     
-    # Setup postnummer dictionary using forward slashes for paths.
-    with open('assets/postnumre.json', encoding='utf-8') as data_file:
+    # Determine file paths using pathlib.
+    BASE_DIR = Path(__file__).parent
+    json_path = BASE_DIR / "assets" / "postnumre.json"
+    logo_path = BASE_DIR / "assets" / "logo.png"
+
+    # Setup postnummer dictionary.
+    with open(json_path, encoding='utf-8') as data_file:
         data = pd.DataFrame(json.load(data_file))
     
     postnumre = data["nr"]
@@ -37,11 +43,11 @@ if st.session_state["authenticated"]:
     # Add logos
     left_co, cent_co, last_co = st.columns(3)
     with cent_co:
-        st.image("assets/logo.png")
+        st.image(str(logo_path))
     st.markdown('##')
     
-    # App title
-    st.title("Tilbudsmodul")
+    # App title with version counter
+    st.title("Tilbudsmodul v2")
     st.divider()
     
     # Input row 1
