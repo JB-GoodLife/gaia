@@ -58,9 +58,6 @@ def _calculate_cb(input_fields):
     
     # Update state 
     state.calculation_done = True
-
-    # Rerun app
-    st.rerun()
     
 # Function to send email
 def send_email(subject, body):
