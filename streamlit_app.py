@@ -48,7 +48,7 @@ def _logout_cb():
 def send_email(subject, body):
     try:
         # Hardcoded recipient
-        recipient = "ehz@goodlife.dk"
+        recipient = "jb@goodlife.dk"
         cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
