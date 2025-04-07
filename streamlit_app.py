@@ -50,12 +50,17 @@ def _logout_cb():
 
 # Calculation callback
 def _calculate_cb(input_fields):
-    state.form_data = input_fields
-    state.calculation_done = True
+    # Update state 
+    state.calculation_done = False
     
+    state.form_data = input_fields
+
     # Replace this with your actual calculation logic
     state.result = input_fields["field1"] + input_fields["field2"] + input_fields["field3"]
-
+    
+    # Update state 
+    state.calculation_done = True
+    
 # Function to send email
 def send_email(subject, body):
     try:
@@ -112,10 +117,10 @@ def login_page():
 
 # Main application
 def main_app():
-    st.title("Calculation Form")
+    st.title("Rådgiver- og henvisningsværktøj")
     
     # Main content inside an expander (open initially)
-    with st.expander("Tilbudsmodul", expanded=True):
+    with st.expander("**Tilbudsmodul**", expanded=True):
         with st.form("calculation_form", clear_on_submit=False, border=False):
             input_fields = {}
 
@@ -169,7 +174,7 @@ def main_app():
             st.subheader("Kundeforhold")
             col1, col2, col3 = st.columns(3)
             with col1:
-                input_fields["yngste_ejers_alder"] = st.number_input(
+                input_fields["field7"] = st.number_input(
                     "Yngste ejers alder",
                     min_value=18,
                     max_value=120,
@@ -177,7 +182,7 @@ def main_app():
                     step=1
                 )
             with col2:
-                input_fields["postnummer"] = st.text_input(
+                input_fields["field8"] = st.text_input(
                     "Postnummer",
                     key="postnummer"
                 )
@@ -192,7 +197,6 @@ def main_app():
         # Email section inside a collapsible container (collapsed by default)
         with st.expander("Send lead", expanded=False):
             with st.form("email_form", border=False):
-                st.write("Indtast venligst følgende oplysninger:")
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     navn = st.text_input("Navn *", key="navn_email")
