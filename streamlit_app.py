@@ -105,7 +105,7 @@ if st.button("Beregn", type="primary", use_container_width=True):
         st.subheader("Illustration")
         st.bar_chart(df, color=['#295237'])
 
-    if st.button("Beregn", type="primary", use_container_width=True):
+    if st.button("Send e-mail", type="primary", use_container_width=True):
         # SMTP2GO settings
         SMTP_SERVER = "mail.smtp2go.com"
         SMTP_PORT = 587  # Use 465 for SSL, 587 for STARTTLS
