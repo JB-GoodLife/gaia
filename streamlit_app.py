@@ -36,11 +36,16 @@ def _set_state_cb(**kwargs):
             state[state_key] = state[widget_key]
 
 # Authentication callback
-def _login_cb(password):
-    if password == st.secrets["Site_Pass"]:
+def _login_cb():
+    if state.password == st.secrets["Site_Pass"]:
         state.authenticated = True
     else:
         state.login_error = True
+
+# Password change callback (for Enter key)
+def password_entered():
+    # This will be called when Enter is pressed in the password field
+    _login_cb()
 
 # Logout callback
 def _logout_cb():
@@ -94,11 +99,12 @@ if os.path.exists(logo_path):
 def login_page():
     st.title("Login")
     
-    password = st.text_input("Password", type="password", key="password_input", 
-                             on_change=_set_state_cb, kwargs={'password': 'password_input'})
+    # Set up password field with on_change callback for Enter key
+    st.text_input("Password", type="password", key="password", on_change=password_entered)
     
-    if st.button("Login", on_click=_login_cb, args=(state.password,)):
-        pass
+    # Button is still provided as an alternative login method
+    if st.button("Login"):
+        _login_cb()
     
     if state.get('login_error', False):
         st.error("Incorrect password")
