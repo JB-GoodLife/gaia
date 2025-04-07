@@ -24,16 +24,7 @@ def init_state(key, value):
 init_state('authenticated', False)
 init_state('calculation_done', False)
 init_state('form_data', {})
-init_state('email_data', {})
-init_state('password', '')
 init_state('result', 0)
-
-# Generic callback to set state
-def _set_state_cb(**kwargs):
-    for state_key, widget_key in kwargs.items():
-        val = state.get(widget_key, None)
-        if val is not None or val == "":
-            state[state_key] = state[widget_key]
 
 # Authentication callback
 def _login_cb():
@@ -52,13 +43,12 @@ def _logout_cb():
     state.authenticated = False
     state.calculation_done = False
     state.form_data = {}
-    state.email_data = {}
     
 # Function to send email
 def send_email(subject, body):
     try:
         # Hardcoded recipient
-        recipient = "jb@goodlife.dk"
+        recipient = "ehz@goodlife.dk"
         cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
@@ -194,66 +184,67 @@ def main_app():
         
         # Email section inside a collapsible container (collapsed by default)
         with st.expander("Send lead", expanded=False):
-            with st.form("email_form", border=False):
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    navn = st.text_input("Navn *", key="navn_email")
-                    email = st.text_input("Email *", value=state.form_data.get("email", ""), key="email_email")
-                with col2:
-                    adresse = st.text_input("Adresse *", key="adresse_email")
-                    alder = st.number_input("Alder (Yngste ejer) *", min_value=18, max_value=120, step=1, value=30, key="alder_email")
-                with col3:
-                    telefonnummer = st.text_input("Telefonnummer *", value=state.form_data.get("phone", ""), key="telefonnummer_email")
-                kommentar = st.text_area("Kommentar (valgfri)", height=150, key="kommentar_email")
-                email_submitted = st.form_submit_button("Send lead")
-                if email_submitted:
-                    # Validate required fields
-                    required_fields = {
-                        "Navn": navn,
-                        "Adresse": adresse,
-                        "Telefonnummer": telefonnummer,
-                        "Email": email,
-                        "Alder (Yngste ejer)": alder
+            # Using regular widgets instead of a form
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                navn = st.text_input("Navn *", key="navn_email")
+                email = st.text_input("Email *", value=state.form_data.get("email", ""), key="email_email")
+            with col2:
+                adresse = st.text_input("Adresse *", key="adresse_email")
+                alder = st.number_input("Alder (Yngste ejer) *", min_value=18, max_value=120, step=1, value=30, key="alder_email")
+            with col3:
+                telefonnummer = st.text_input("Telefonnummer *", value=state.form_data.get("phone", ""), key="telefonnummer_email")
+            kommentar = st.text_area("Kommentar (valgfri)", height=150, key="kommentar_email")
+            
+            # Regular button instead of form submit button
+            if st.button("Send lead"):
+                # Validate required fields
+                required_fields = {
+                    "Navn": navn,
+                    "Adresse": adresse,
+                    "Telefonnummer": telefonnummer,
+                    "Email": email,
+                    "Alder (Yngste ejer)": alder
+                }
+                missing_fields = [field for field, value in required_fields.items() if not value]
+                if missing_fields:
+                    st.error(f"Venligst udfyld alle påkrævede felter: {', '.join(missing_fields)}")
+                else:
+                    email_data = {
+                        "navn": navn,
+                        "adresse": adresse,
+                        "telefonnummer": telefonnummer,
+                        "email": email,
+                        "alder": alder,
+                        "kommentar": kommentar
                     }
-                    missing_fields = [field for field, value in required_fields.items() if not value]
-                    if missing_fields:
-                        st.error(f"Venligst udfyld alle påkrævede felter: {', '.join(missing_fields)}")
+                    subject = "Ny beregning fra formular"
+                    body = f"""
+                    <h2>Calculation Results</h2>
+                    <p>Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
+                    <h3>Original Input Data:</h3>
+                    <ul>
+                    """
+                    for key, value in state.form_data.items():
+                        body += f"<li><strong>{key}:</strong> {value}</li>"
+                    body += f"</ul><h3>Calculation Result: {state.result}</h3>"
+                    body += f"""
+                    <h3>Personal Information:</h3>
+                    <ul>
+                    <li><strong>Navn:</strong> {navn}</li>
+                    <li><strong>Adresse:</strong> {adresse}</li>
+                    <li><strong>Telefonnummer:</strong> {telefonnummer}</li>
+                    <li><strong>Email:</strong> {email}</li>
+                    <li><strong>Alder (Yngste ejer):</strong> {alder}</li>
+                    """
+                    if kommentar:
+                        body += f"<li><strong>Kommentar:</strong> {kommentar}</li>"
+                    body += "</ul>"
+                    success, message = send_email(subject, body)
+                    if success:
+                        st.success(message)
                     else:
-                        email_data = {
-                            "navn": navn,
-                            "adresse": adresse,
-                            "telefonnummer": telefonnummer,
-                            "email": email,
-                            "alder": alder,
-                            "kommentar": kommentar
-                        }
-                        subject = "Ny beregning fra formular"
-                        body = f"""
-                        <h2>Calculation Results</h2>
-                        <p>Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
-                        <h3>Original Input Data:</h3>
-                        <ul>
-                        """
-                        for key, value in state.form_data.items():
-                            body += f"<li><strong>{key}:</strong> {value}</li>"
-                        body += f"</ul><h3>Calculation Result: {state.result}</h3>"
-                        body += f"""
-                        <h3>Personal Information:</h3>
-                        <ul>
-                        <li><strong>Navn:</strong> {navn}</li>
-                        <li><strong>Adresse:</strong> {adresse}</li>
-                        <li><strong>Telefonnummer:</strong> {telefonnummer}</li>
-                        <li><strong>Email:</strong> {email}</li>
-                        <li><strong>Alder (Yngste ejer):</strong> {alder}</li>
-                        """
-                        if kommentar:
-                            body += f"<li><strong>Kommentar:</strong> {kommentar}</li>"
-                        body += "</ul>"
-                        success, message = send_email(subject, body)
-                        if success:
-                            st.success(message)
-                        else:
-                            st.error(message)
+                        st.error(message)
 
     # Sidebar and logout
     st.sidebar.title("Delsalg i korte træk.")
