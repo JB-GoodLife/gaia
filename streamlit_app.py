@@ -91,7 +91,9 @@ def send_email(subject, body):
 # Display logo
 logo_path = "assets/logo.png"
 if os.path.exists(logo_path):
-    st.image(logo_path, width=200)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+         st.image(logo_path, width=300)
 
 # Authentication system
 def login_page():
