@@ -167,7 +167,7 @@ def main_app():
 
         # --- Kundeforhold ---
         st.subheader("Kundeforhold")
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(3)
         with col1:
             input_fields["yngste_ejers_alder"] = st.number_input(
                 "Yngste ejers alder",
@@ -182,13 +182,13 @@ def main_app():
                 "Postnummer",
                 key="postnummer"
             )
-        with col3:
-        # Calculate button
-            submitted = st.form_submit_button(
-                "Beregning", 
-                on_click=_calculate_cb, 
-                args=(input_fields,)
-                )            
+
+    # Calculate button
+        submitted = st.form_submit_button(
+            "Beregning", 
+            on_click=_calculate_cb, 
+            args=(input_fields,)
+            )            
 
     # Display calculation results if calculation is done
     if state.calculation_done:
