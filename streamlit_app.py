@@ -86,9 +86,9 @@ def send_email(subject, body):
         server.send_message(message)
         server.quit()
         
-        return True, f"Email sent successfully to {recipient}!"
+        return True, f"Lead sendt til {recipient}!"
     except Exception as e:
-        return False, f"Error sending email: {str(e)}"
+        return False, f"Fejl i afsendelse af lead: {str(e)}"
 
 # Display logo
 logo_path = "assets/logo.png"
@@ -138,8 +138,7 @@ def main_app():
                 # Selectbox for period; parse integer from selected string
                 period = st.selectbox(
                     "Udbetalingsperiode",
-                    ["1 år", "2 år", "3 år", "4 år", "5 år", "10 år"],
-                    index=4
+                    ["5 år", "10 år"]
                 )
                 # Convert selected option (e.g., "5 år") into an integer (5)
                 input_fields["field3"] = int(period.split()[0])
@@ -191,7 +190,7 @@ def main_app():
         st.success(f"Sandsynlighed: Høj. (Beregning: {state.result})")
         
         # Email section inside a collapsible container (collapsed by default)
-        with st.expander("Send Results via Email", expanded=False):
+        with st.expander("Send lead", expanded=False):
             with st.form("email_form", border=False):
                 st.write("Indtast venligst følgende oplysninger:")
                 col1, col2, col3 = st.columns(3)
@@ -204,7 +203,7 @@ def main_app():
                 with col3:
                     telefonnummer = st.text_input("Telefonnummer *", value=state.form_data.get("phone", ""), key="telefonnummer_email")
                 kommentar = st.text_area("Kommentar (valgfri)", height=150, key="kommentar_email")
-                email_submitted = st.form_submit_button("Send Email")
+                email_submitted = st.form_submit_button("Send lead")
                 if email_submitted:
                     # Validate required fields
                     required_fields = {
