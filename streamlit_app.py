@@ -24,6 +24,7 @@ def init_state(key, value):
 init_state('authenticated', False)
 init_state('calculation_done', False)
 init_state('form_data', {})
+init_state('email_data', {})
 init_state('password', '')
 
 # Generic callback to set state
@@ -45,6 +46,7 @@ def _logout_cb():
     state.authenticated = False
     state.calculation_done = False
     state.form_data = {}
+    state.email_data = {}
 
 # Calculation callback
 def _calculate_cb(input_fields):
@@ -108,108 +110,138 @@ def login_page():
 def main_app():
     st.title("Calculation Form")
     
-    # Form inputs
+    # Form inputs with original 9 fields
     with st.form("calculation_form", clear_on_submit=False):
-        # Creating mandatory fields and the numeric fields
-        st.subheader("Personlige oplysninger")
+        # Creating 9 input fields arranged in 3 columns
+        st.subheader("Enter your information")
         col1, col2, col3 = st.columns(3)
         
         input_fields = {}
         
         with col1:
-            input_fields["navn"] = st.text_input("Navn *", key="navn_input")
+            input_fields["name"] = st.text_input("Name", key="name_input")
             input_fields["field1"] = st.number_input("Field 1", value=0.0, key="field1_input")
-            
-        with col2:
-            input_fields["adresse"] = st.text_input("Adresse *", key="adresse_input")
-            input_fields["field2"] = st.number_input("Field 2", value=0.0, key="field2_input")
-            
-        with col3:
-            input_fields["telefonnummer"] = st.text_input("Telefonnummer *", key="telefonnummer_input")
-            input_fields["field3"] = st.number_input("Field 3", value=0.0, key="field3_input")
-        
-        col4, col5, col6 = st.columns(3)
-        
-        with col4:
-            input_fields["email"] = st.text_input("Email *", key="email_input")
             input_fields["field4"] = st.number_input("Field 4", value=0.0, key="field4_input")
             
-        with col5:
-            input_fields["alder"] = st.number_input("Alder (Yngste ejer) *", min_value=18, max_value=120, step=1, value=30, key="alder_input")
+        with col2:
+            input_fields["email"] = st.text_input("Email", key="email_input")
+            input_fields["field2"] = st.number_input("Field 2", value=0.0, key="field2_input")
             input_fields["field5"] = st.number_input("Field 5", value=0.0, key="field5_input")
             
-        with col6:
-            # Empty space to align with other columns
-            st.text("")
+        with col3:
+            input_fields["phone"] = st.text_input("Phone", key="phone_input")
+            input_fields["field3"] = st.number_input("Field 3", value=0.0, key="field3_input")
             input_fields["field6"] = st.number_input("Field 6", value=0.0, key="field6_input")
-        
-        # Optional comment field spanning all columns
-        st.subheader("Yderligere oplysninger")
-        input_fields["kommentar"] = st.text_area("Kommentar (valgfri)", height=150, key="kommentar_input")
         
         # Submit button
         submitted = st.form_submit_button("Calculate", on_click=_calculate_cb, args=(input_fields,))
 
-    # Validation for mandatory fields
+    # Display calculation results if calculation is done
     if state.calculation_done:
-        required_fields = ["navn", "adresse", "telefonnummer", "email", "alder"]
-        missing_fields = [field for field in required_fields if not state.form_data.get(field)]
+        st.success(f"Calculation Result: {state.result}")
         
-        if missing_fields:
-            st.error(f"Venligst udfyld alle påkrævede felter: {', '.join(missing_fields)}")
-            state.calculation_done = False
-        else:
-            st.success(f"Calculation Result: {state.result}")
+        # Email section with additional fields
+        st.subheader("Send Results via Email")
+        
+        # Email form with required and optional fields
+        with st.form("email_form"):
+            st.write("Indtast venligst følgende oplysninger:")
             
-            # Email section
-            st.subheader("Send Results via Email")
+            col1, col2, col3 = st.columns(3)
             
-            if st.button("Send Email"):
-                # Prepare email content
-                subject = "Ny beregning fra formular"
+            with col1:
+                navn = st.text_input("Navn *", key="navn_email")
+                email = st.text_input("Email *", 
+                                    value=state.form_data.get("email", ""), 
+                                    key="email_email")
+            
+            with col2:
+                adresse = st.text_input("Adresse *", key="adresse_email")
+                alder = st.number_input("Alder (Yngste ejer) *", 
+                                      min_value=18, 
+                                      max_value=120, 
+                                      step=1, 
+                                      value=30, 
+                                      key="alder_email")
+            
+            with col3:
+                telefonnummer = st.text_input("Telefonnummer *", 
+                                            value=state.form_data.get("phone", ""), 
+                                            key="telefonnummer_email")
+            
+            # Comment field spanning all columns
+            kommentar = st.text_area("Kommentar (valgfri)", height=150, key="kommentar_email")
+            
+            # Submit button for email
+            email_submitted = st.form_submit_button("Send Email")
+            
+            if email_submitted:
+                # Validate required fields
+                required_fields = {
+                    "Navn": navn,
+                    "Adresse": adresse,
+                    "Telefonnummer": telefonnummer,
+                    "Email": email,
+                    "Alder (Yngste ejer)": alder
+                }
                 
-                # Create HTML body with form data and results
-                body = f"""
-                <h2>Calculation Results</h2>
-                <p>Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
+                missing_fields = [field for field, value in required_fields.items() if not value]
                 
-                <h3>Personlige oplysninger:</h3>
-                <ul>
-                <li><strong>Navn:</strong> {state.form_data['navn']}</li>
-                <li><strong>Adresse:</strong> {state.form_data['adresse']}</li>
-                <li><strong>Telefonnummer:</strong> {state.form_data['telefonnummer']}</li>
-                <li><strong>Email:</strong> {state.form_data['email']}</li>
-                <li><strong>Alder (Yngste ejer):</strong> {state.form_data['alder']}</li>
-                """
-                
-                # Add comment if provided
-                if state.form_data.get('kommentar'):
-                    body += f"<li><strong>Kommentar:</strong> {state.form_data['kommentar']}</li>"
-                
-                body += "</ul>"
-                
-                # Add numeric field data
-                body += f"""
-                <h3>Indtastede værdier:</h3>
-                <ul>
-                <li><strong>Field 1:</strong> {state.form_data['field1']}</li>
-                <li><strong>Field 2:</strong> {state.form_data['field2']}</li>
-                <li><strong>Field 3:</strong> {state.form_data['field3']}</li>
-                <li><strong>Field 4:</strong> {state.form_data['field4']}</li>
-                <li><strong>Field 5:</strong> {state.form_data['field5']}</li>
-                <li><strong>Field 6:</strong> {state.form_data['field6']}</li>
-                </ul>
-                """
-                
-                # Add calculation result
-                body += f"<h3>Calculation Result: {state.result}</h3>"
-                
-                # Send the email
-                success, message = send_email(subject, body)
-                if success:
-                    st.success(message)
+                if missing_fields:
+                    st.error(f"Venligst udfyld alle påkrævede felter: {', '.join(missing_fields)}")
                 else:
-                    st.error(message)
+                    # Store email data
+                    email_data = {
+                        "navn": navn,
+                        "adresse": adresse,
+                        "telefonnummer": telefonnummer,
+                        "email": email,
+                        "alder": alder,
+                        "kommentar": kommentar
+                    }
+                    
+                    # Prepare email content
+                    subject = "Ny beregning fra formular"
+                    
+                    # Create HTML body with form data and results
+                    body = f"""
+                    <h2>Calculation Results</h2>
+                    <p>Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
+                    
+                    <h3>Original Input Data:</h3>
+                    <ul>
+                    """
+                    
+                    # Add all form fields from calculation
+                    for key, value in state.form_data.items():
+                        body += f"<li><strong>{key}:</strong> {value}</li>"
+                    
+                    # Add calculation result
+                    body += f"</ul><h3>Calculation Result: {state.result}</h3>"
+                    
+                    # Add personal information
+                    body += f"""
+                    <h3>Personal Information:</h3>
+                    <ul>
+                    <li><strong>Navn:</strong> {navn}</li>
+                    <li><strong>Adresse:</strong> {adresse}</li>
+                    <li><strong>Telefonnummer:</strong> {telefonnummer}</li>
+                    <li><strong>Email:</strong> {email}</li>
+                    <li><strong>Alder (Yngste ejer):</strong> {alder}</li>
+                    """
+                    
+                    # Add comment if provided
+                    if kommentar:
+                        body += f"<li><strong>Kommentar:</strong> {kommentar}</li>"
+                    
+                    body += "</ul>"
+                    
+                    # Send the email
+                    success, message = send_email(subject, body)
+                    if success:
+                        st.success(message)
+                    else:
+                        st.error(message)
 
 # Main app flow
 if state.authenticated:
