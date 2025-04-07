@@ -104,3 +104,33 @@ if st.button("Beregn", type="primary", use_container_width=True):
         st.dataframe(df.T.style.format(thousands="."), use_container_width=True)
         st.subheader("Illustration")
         st.bar_chart(df, color=['#295237'])
+
+    if st.button("Beregn", type="primary", use_container_width=True):
+        # SMTP2GO settings
+        SMTP_SERVER = "mail.smtp2go.com"
+        SMTP_PORT = 587  # Use 465 for SSL, 587 for STARTTLS
+        USERNAME = st.secrets["SMTP-User"]
+        PASSWORD = st.secrets["SMTP-Pass"]
+
+        # Email details
+        sender_email = "lead@goodlife.dk"
+        receiver_email = "jb@goodlife.dk"
+        subject = "Test Email from Lead Tool"
+        body = "Hello,\n\nThis is a test email sent through Streamlit using SMTP2GO and Python."
+
+        # Compose the email
+        msg = MIMEMultipart()
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain"))
+
+        # Send the email
+        try:
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+                server.starttls()
+                server.login(USERNAME, PASSWORD)
+                server.sendmail(sender_email, receiver_email, msg.as_string())
+                print("Email sent successfully!")
+        except Exception as e:
+            print("Failed to send email:", e)
