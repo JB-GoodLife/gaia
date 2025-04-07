@@ -250,7 +250,7 @@ if state.authenticated:
     main_app()
     
     # Add Lorem Ipsum bullets to sidebar
-    st.sidebar.title("Information")
+    st.sidebar.title("Delsalg i korte træk.")
     st.sidebar.markdown("""
 - **Et delsalg er et salg af en del af boligen** for at få glæde af sin friværdi uden likviditetsmæssig belastning.
 
