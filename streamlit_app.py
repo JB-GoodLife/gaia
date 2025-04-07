@@ -109,8 +109,8 @@ if st.button("Beregn", type="primary", use_container_width=True):
         # SMTP2GO settings
         SMTP_SERVER = "mail.smtp2go.com"
         SMTP_PORT = 587  # Use 465 for SSL, 587 for STARTTLS
-        USERNAME = st.secrets["SMTP-User"]
-        PASSWORD = st.secrets["SMTP-Pass"]
+        USERNAME = st.secrets["SMTP_User"]
+        PASSWORD = st.secrets["SMTP_Pass"]
 
         # Email details
         sender_email = "lead@goodlife.dk"
