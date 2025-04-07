@@ -262,7 +262,9 @@ if state.authenticated:
 
 - Kunden bliver boende og **bestemmer selv over boligen** – også hvornår den skal sælges.
 
-- **Kunden betaler leje for den solgte del**. Det sker gennem ejerandelen ("med mursten") i stedet for med penge. Derfor er **GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.**
+- **Kunden betaler leje for den solgte del**. Det sker gennem størrelsen på GoodLifes ejerandel ("med mursten").
+
+- Derfor er **GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.**  Udover ejerandelens størrelse i forbindelse med delsalget er der **ingen andre omkostninger til GoodLife.**
 
 
     """)
