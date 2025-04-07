@@ -63,7 +63,7 @@ def send_email(subject, body, recipient):
         
         # Create message
         message = MIMEMultipart()
-        message["From"] = "lead@goodlife.dk"
+        message["From"] = "lead@goodlife.dk"  # Changed as requested
         message["To"] = recipient
         message["Subject"] = subject
         
@@ -107,19 +107,26 @@ def main_app():
     
     # Form inputs
     with st.form("calculation_form", clear_on_submit=False):
-        # Creating 9 input fields
+        # Creating 9 input fields arranged in 3 columns
+        st.subheader("Enter your information")
+        col1, col2, col3 = st.columns(3)
+        
         input_fields = {}
         
-        # You can customize these fields based on your requirements
-        input_fields["name"] = st.text_input("Name", key="name_input")
-        input_fields["email"] = st.text_input("Email", key="email_input")
-        input_fields["phone"] = st.text_input("Phone", key="phone_input")
-        input_fields["field1"] = st.number_input("Field 1", value=0.0, key="field1_input")
-        input_fields["field2"] = st.number_input("Field 2", value=0.0, key="field2_input")
-        input_fields["field3"] = st.number_input("Field 3", value=0.0, key="field3_input")
-        input_fields["field4"] = st.number_input("Field 4", value=0.0, key="field4_input")
-        input_fields["field5"] = st.number_input("Field 5", value=0.0, key="field5_input")
-        input_fields["field6"] = st.number_input("Field 6", value=0.0, key="field6_input")
+        with col1:
+            input_fields["name"] = st.text_input("Name", key="name_input")
+            input_fields["field1"] = st.number_input("Field 1", value=0.0, key="field1_input")
+            input_fields["field4"] = st.number_input("Field 4", value=0.0, key="field4_input")
+            
+        with col2:
+            input_fields["email"] = st.text_input("Email", key="email_input")
+            input_fields["field2"] = st.number_input("Field 2", value=0.0, key="field2_input")
+            input_fields["field5"] = st.number_input("Field 5", value=0.0, key="field5_input")
+            
+        with col3:
+            input_fields["phone"] = st.text_input("Phone", key="phone_input")
+            input_fields["field3"] = st.number_input("Field 3", value=0.0, key="field3_input")
+            input_fields["field6"] = st.number_input("Field 6", value=0.0, key="field6_input")
         
         # Submit button
         submitted = st.form_submit_button("Calculate", on_click=_calculate_cb, args=(input_fields,))
@@ -161,6 +168,20 @@ def main_app():
 # Main app flow
 if state.authenticated:
     main_app()
+    
+    # Add Lorem Ipsum bullets to sidebar
+    st.sidebar.title("Information")
+    st.sidebar.markdown("""
+    • Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor velit vitae justo finibus, at varius arcu facilisis.
+    
+    • Sed non risus magna. Duis sed felis vel nisi ultrices tincidunt. Vestibulum ante ipsum primis in faucibus orci.
+    
+    • Phasellus ullamcorper, magna in vestibulum elementum, eros urna vulputate nisl, at tincidunt erat augue vel eros.
+    
+    • Curabitur porta sapien ac neque consectetur, vel tempor mauris fringilla. Nulla facilisi. Donec ultrices urna vel.
+    
+    • Maecenas venenatis ante ut neque convallis, in eleifend magna tempus. Nunc feugiat nulla sit amet diam mattis.
+    """)
     
     # Logout option
     if st.sidebar.button("Logout", on_click=_logout_cb):
