@@ -63,7 +63,7 @@ def send_email(subject, body, recipient):
         
         # Create message
         message = MIMEMultipart()
-        message["From"] = smtp_user
+        message["From"] = "lead@goodlife.dk"
         message["To"] = recipient
         message["Subject"] = subject
         
