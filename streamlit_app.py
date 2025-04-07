@@ -25,7 +25,7 @@ if not st.session_state["authenticated"]:
         password = st.text_input("Password", type="password")
         submit = st.form_submit_button("Login")
         if submit:
-            if password == "TestPass":
+            if password == st.secrets["password"]:
                 st.session_state["authenticated"] = True
             else:
                 st.error("Incorrect password!")
