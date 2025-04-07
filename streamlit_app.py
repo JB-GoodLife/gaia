@@ -12,11 +12,47 @@ st.set_page_config(
     layout="centered"
 )
 
-# Session state initialization
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-if "form_data" not in st.session_state:
-    st.session_state.form_data = {}
+# State management shortcuts
+state = st.session_state
+
+# Initialize state variables
+def init_state(key, value):
+    if key not in state:
+        state[key] = value
+
+# Initialize all required state variables
+init_state('authenticated', False)
+init_state('calculation_done', False)
+init_state('form_data', {})
+init_state('password', '')
+
+# Generic callback to set state
+def _set_state_cb(**kwargs):
+    for state_key, widget_key in kwargs.items():
+        val = state.get(widget_key, None)
+        if val is not None or val == "":
+            state[state_key] = state[widget_key]
+
+# Authentication callback
+def _login_cb(password):
+    if password == st.secrets["Site_Pass"]:
+        state.authenticated = True
+    else:
+        state.login_error = True
+
+# Logout callback
+def _logout_cb():
+    state.authenticated = False
+    state.calculation_done = False
+    state.form_data = {}
+
+# Calculation callback
+def _calculate_cb(input_fields):
+    state.form_data = input_fields
+    state.calculation_done = True
+    
+    # Replace this with your actual calculation logic
+    state.result = input_fields["field1"] + input_fields["field2"] + input_fields["field3"]
 
 # Function to send email
 def send_email(subject, body, recipient):
@@ -56,54 +92,45 @@ if os.path.exists(logo_path):
 def login_page():
     st.title("Login")
     
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if password == st.secrets["Site_Pass"]:
-            st.session_state.authenticated = True
-            st.experimental_rerun()
-        else:
-            st.error("Incorrect password")
+    password = st.text_input("Password", type="password", key="password_input", 
+                             on_change=_set_state_cb, kwargs={'password': 'password_input'})
+    
+    if st.button("Login", on_click=_login_cb, args=(state.password,)):
+        pass
+    
+    if state.get('login_error', False):
+        st.error("Incorrect password")
 
 # Main application
 def main_app():
     st.title("Calculation Form")
     
     # Form inputs
-    with st.form("calculation_form"):
+    with st.form("calculation_form", clear_on_submit=False):
         # Creating 9 input fields
         input_fields = {}
         
         # You can customize these fields based on your requirements
-        input_fields["name"] = st.text_input("Name")
-        input_fields["email"] = st.text_input("Email")
-        input_fields["phone"] = st.text_input("Phone")
-        input_fields["field1"] = st.number_input("Field 1", value=0.0)
-        input_fields["field2"] = st.number_input("Field 2", value=0.0)
-        input_fields["field3"] = st.number_input("Field 3", value=0.0)
-        input_fields["field4"] = st.number_input("Field 4", value=0.0)
-        input_fields["field5"] = st.number_input("Field 5", value=0.0)
-        input_fields["field6"] = st.number_input("Field 6", value=0.0)
+        input_fields["name"] = st.text_input("Name", key="name_input")
+        input_fields["email"] = st.text_input("Email", key="email_input")
+        input_fields["phone"] = st.text_input("Phone", key="phone_input")
+        input_fields["field1"] = st.number_input("Field 1", value=0.0, key="field1_input")
+        input_fields["field2"] = st.number_input("Field 2", value=0.0, key="field2_input")
+        input_fields["field3"] = st.number_input("Field 3", value=0.0, key="field3_input")
+        input_fields["field4"] = st.number_input("Field 4", value=0.0, key="field4_input")
+        input_fields["field5"] = st.number_input("Field 5", value=0.0, key="field5_input")
+        input_fields["field6"] = st.number_input("Field 6", value=0.0, key="field6_input")
         
         # Submit button
-        submitted = st.form_submit_button("Calculate")
-        
-        if submitted:
-            # Store the form data in session state
-            st.session_state.form_data = input_fields
-            
-            # Perform calculations (placeholder - you'll replace this later)
-            result = input_fields["field1"] + input_fields["field2"] + input_fields["field3"]
-            
-            # Display result
-            st.success(f"Calculation Result: {result}")
-            
-            # Email section becomes available
-            st.session_state.calculation_done = True
+        submitted = st.form_submit_button("Calculate", on_click=_calculate_cb, args=(input_fields,))
 
-    # Email section (only visible after calculation)
-    if st.session_state.get("calculation_done", False):
+    # Display calculation results if calculation is done
+    if state.calculation_done:
+        st.success(f"Calculation Result: {state.result}")
+        
+        # Email section
         st.subheader("Send Results via Email")
-        recipient = st.text_input("Recipient Email", value=st.session_state.form_data.get("email", ""))
+        recipient = st.text_input("Recipient Email", value=state.form_data.get("email", ""), key="recipient_input")
         
         if st.button("Send Email"):
             # Prepare email content
@@ -118,12 +145,11 @@ def main_app():
             """
             
             # Add all form fields
-            for key, value in st.session_state.form_data.items():
+            for key, value in state.form_data.items():
                 body += f"<li><strong>{key}:</strong> {value}</li>"
             
             # Add calculation result
-            result = st.session_state.form_data["field1"] + st.session_state.form_data["field2"] + st.session_state.form_data["field3"]
-            body += f"</ul><h3>Calculation Result: {result}</h3>"
+            body += f"</ul><h3>Calculation Result: {state.result}</h3>"
             
             # Send the email
             success, message = send_email(subject, body, recipient)
@@ -133,13 +159,11 @@ def main_app():
                 st.error(message)
 
 # Main app flow
-if st.session_state.authenticated:
+if state.authenticated:
     main_app()
     
     # Logout option
-    if st.sidebar.button("Logout"):
-        st.session_state.authenticated = False
-        st.session_state.calculation_done = False
-        st.experimental_rerun()
+    if st.sidebar.button("Logout", on_click=_logout_cb):
+        pass
 else:
     login_page()
