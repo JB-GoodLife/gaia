@@ -48,7 +48,7 @@ def _logout_cb():
 def send_email(subject, body):
     try:
         # Hardcoded recipient
-        recipient = "ehz@goodlife.dk"
+        recipient = "jb@goodlife.dk"
         cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
@@ -90,7 +90,7 @@ def login_page():
     st.title("Login")
     
     # Set up password field with on_change callback for Enter key
-    st.text_input("Password", type="password", key="password", on_change=password_entered)
+    st.text_input("Password", type="password", key="password", on_change=_login_cb)
     
     # Button is still provided as an alternative login method
     if st.button("Login"):
