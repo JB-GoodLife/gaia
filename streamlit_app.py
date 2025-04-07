@@ -26,6 +26,7 @@ init_state('calculation_done', False)
 init_state('form_data', {})
 init_state('email_data', {})
 init_state('password', '')
+init_state('result', 0)
 
 # Generic callback to set state
 def _set_state_cb(**kwargs):
@@ -47,17 +48,6 @@ def _logout_cb():
     state.calculation_done = False
     state.form_data = {}
     state.email_data = {}
-
-# Calculation callback
-def _calculate_cb(input_fields):
-    
-    state.form_data = input_fields
-
-    # Replace this with your actual calculation logic
-    state.result = input_fields["field1"] + input_fields["field2"] + input_fields["field3"]
-    
-    # Update state 
-    state.calculation_done = True
     
 # Function to send email
 def send_email(subject, body):
@@ -119,74 +109,78 @@ def main_app():
     
     # Main content inside an expander (open initially)
     with st.expander("**Tilbudsmodul**", expanded=True):
-        with st.form("calculation_form", clear_on_submit=False, border=False):
-            input_fields = {}
+        # Using regular inputs instead of a form
+        input_fields = {}
 
-            # --- Udbetaling ---
-            st.subheader("Udbetaling")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                input_fields["field1"] = st.number_input(
-                    "Månedlig udbetaling (DKK)",
-                    value=0.0,
-                    key="maanedlig_udbetaling"
-                )
-            with col2:
-                input_fields["field2"] = st.number_input(
-                    "Engangsudbetaling (DKK)",
-                    value=0.0,
-                    key="engangsudbetaling"
-                )
-            with col3:
-                # Selectbox for period; parse integer from selected string
-                period = st.selectbox(
-                    "Udbetalingsperiode",
-                    ["5 år", "10 år"]
-                )
-                # Convert selected option (e.g., "5 år") into an integer (5)
-                input_fields["field3"] = int(period.split()[0])
+        # --- Udbetaling ---
+        st.subheader("Udbetaling")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            input_fields["field1"] = st.number_input(
+                "Månedlig udbetaling (DKK)",
+                value=0.0,
+                key="maanedlig_udbetaling"
+            )
+        with col2:
+            input_fields["field2"] = st.number_input(
+                "Engangsudbetaling (DKK)",
+                value=0.0,
+                key="engangsudbetaling"
+            )
+        with col3:
+            # Selectbox for period; parse integer from selected string
+            period = st.selectbox(
+                "Udbetalingsperiode",
+                ["5 år", "10 år"]
+            )
+            # Convert selected option (e.g., "5 år") into an integer (5)
+            input_fields["field3"] = int(period.split()[0])
 
-            # --- Boligkarakteristika ---
-            st.subheader("Boligkarakteristika")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                input_fields["field4"] = st.number_input(
-                    "Boligværdi (DKK)",
-                    value=5000000,
-                    key="boligvaerdi"
-                )
-            with col2:
-                input_fields["field5"] = st.number_input(
-                    "Friværdi (DKK)",
-                    value=3500000,
-                    key="frivaerdi"
-                )
-            with col3:
-                input_fields["field6"] = st.selectbox(
-                    "Afdrages lånet løbende?",
-                    ["Ja", "Nej"],
-                    key="afdrag"
-                )
+        # --- Boligkarakteristika ---
+        st.subheader("Boligkarakteristika")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            input_fields["field4"] = st.number_input(
+                "Boligværdi (DKK)",
+                value=5000000,
+                key="boligvaerdi"
+            )
+        with col2:
+            input_fields["field5"] = st.number_input(
+                "Friværdi (DKK)",
+                value=3500000,
+                key="frivaerdi"
+            )
+        with col3:
+            input_fields["field6"] = st.selectbox(
+                "Afdrages lånet løbende?",
+                ["Ja", "Nej"],
+                key="afdrag"
+            )
 
-            # --- Kundeforhold ---
-            st.subheader("Kundeforhold")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                input_fields["field7"] = st.number_input(
-                    "Yngste ejers alder",
-                    min_value=18,
-                    max_value=120,
-                    value=60,
-                    step=1
-                )
-            with col2:
-                input_fields["field8"] = st.text_input(
-                    "Postnummer",
-                    key="postnummer"
-                )
+        # --- Kundeforhold ---
+        st.subheader("Kundeforhold")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            input_fields["field7"] = st.number_input(
+                "Yngste ejers alder",
+                min_value=18,
+                max_value=120,
+                value=60,
+                step=1
+            )
+        with col2:
+            input_fields["field8"] = st.text_input(
+                "Postnummer",
+                key="postnummer"
+            )
 
-            # Calculate button
-            submitted = st.form_submit_button("Beregn", on_click=_calculate_cb, args=(input_fields,))
+        # Calculate button outside form
+        if st.button("Beregn"):
+            # Replace this with your actual calculation logic
+            state.result = input_fields["field1"] + input_fields["field2"] + input_fields["field3"]
+            state.form_data = input_fields
+            state.calculation_done = True
 
     # Display calculation results if calculation is done
     if state.calculation_done:
