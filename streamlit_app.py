@@ -112,83 +112,77 @@ def login_page():
 def main_app():
     st.title("Calculation Form")
     
-    # Form inputs with original 9 fields
-    with st.form("calculation_form", clear_on_submit=False):
-        st.title("Tilbudsmodul")  # or st.subheader, as you prefer
+    # Main content inside an expander (open initially)
+    with st.expander("Tilbudsmodul", expanded=True):
+        with st.form("calculation_form", clear_on_submit=False, border=False):
+            input_fields = {}
 
-        input_fields = {}
+            # --- Udbetaling ---
+            st.subheader("Udbetaling")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                input_fields["field1"] = st.number_input(
+                    "Månedlig udbetaling (DKK)",
+                    value=0.0,
+                    key="maanedlig_udbetaling"
+                )
+            with col2:
+                input_fields["field2"] = st.number_input(
+                    "Engangsudbetaling (DKK)",
+                    value=0.0,
+                    key="engangsudbetaling"
+                )
+            with col3:
+                # Selectbox for period; parse integer from selected string
+                period = st.selectbox(
+                    "Udbetalingsperiode",
+                    ["1 år", "2 år", "3 år", "4 år", "5 år", "10 år"],
+                    index=4
+                )
+                # Convert selected option (e.g., "5 år") into an integer (5)
+                input_fields["field3"] = int(period.split()[0])
 
-        # --- Udbetaling ---
-        st.subheader("Udbetaling")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            input_fields["field1"] = st.number_input(
-                "Månedlig udbetaling (DKK)",
-                value=0.0,
-                key="maanedlig_udbetaling"
-            )
-        with col2:
-            input_fields["field2"] = st.number_input(
-                "Engangsudbetaling (DKK)",
-                value=0.0,
-                key="engangsudbetaling"
-            )
-        with col3:
-            # Selectbox for period; parse integer from selected string
-            period = st.selectbox(
-                "Udbetalingsperiode",
-                ["1 år", "2 år", "3 år", "4 år", "5 år", "10 år"],
-                index=4
-            )
-            # Convert selected option (e.g., "5 år") into an integer (5)
-            input_fields["field3"] = int(period.split()[0])
+            # --- Boligkarakteristika ---
+            st.subheader("Boligkarakteristika")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                input_fields["field4"] = st.number_input(
+                    "Boligværdi (DKK)",
+                    value=5000000,
+                    key="boligvaerdi"
+                )
+            with col2:
+                input_fields["field5"] = st.number_input(
+                    "Friværdi (DKK)",
+                    value=3500000,
+                    key="frivaerdi"
+                )
+            with col3:
+                input_fields["field6"] = st.selectbox(
+                    "Afdrages lånet løbende?",
+                    ["Ja", "Nej"],
+                    key="afdrag"
+                )
 
-        # --- Boligkarakteristika ---
-        st.subheader("Boligkarakteristika")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            input_fields["field4"] = st.number_input(
-                "Boligværdi (DKK)",
-                value=5000000,
-                key="boligvaerdi"
-            )
-        with col2:
-            input_fields["field5"] = st.number_input(
-                "Friværdi (DKK)",
-                value=3500000,
-                key="frivaerdi"
-            )
-        with col3:
-            input_fields["field6"] = st.selectbox(
-                "Afdrages lånet løbende?",
-                ["Ja", "Nej"],
-                key="afdrag"
-            )
+            # --- Kundeforhold ---
+            st.subheader("Kundeforhold")
+            col1, col2 = st.columns(2)
+            with col1:
+                input_fields["yngste_ejers_alder"] = st.number_input(
+                    "Yngste ejers alder",
+                    min_value=18,
+                    max_value=120,
+                    value=60,
+                    step=1
+                )
+            with col2:
+                input_fields["postnummer"] = st.text_input(
+                    "Postnummer",
+                    key="postnummer"
+                )
 
-        # --- Kundeforhold ---
-        st.subheader("Kundeforhold")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            input_fields["yngste_ejers_alder"] = st.number_input(
-                "Yngste ejers alder",
-                min_value=18,
-                max_value=120,
-                value=60,
-                step=1,
-                key="yngste_ejers_alder"
-            )
-        with col2:
-            input_fields["postnummer"] = st.text_input(
-                "Postnummer",
-                key="postnummer"
-            )
-
-    # Calculate button
-        submitted = st.form_submit_button(
-            "Beregning", 
-            on_click=_calculate_cb, 
-            args=(input_fields,)
-            )            
+            # Calculate button
+            submitted = st.form_submit_button("Beregning", on_click=_calculate_cb, args=(input_fields,))
 
     # Display calculation results if calculation is done
     if state.calculation_done:
@@ -196,7 +190,7 @@ def main_app():
         
         # Email section inside a collapsible container (collapsed by default)
         with st.expander("Send Results via Email", expanded=False):
-            with st.form("email_form"):
+            with st.form("email_form", border=False):
                 st.write("Indtast venligst følgende oplysninger:")
                 col1, col2, col3 = st.columns(3)
                 with col1:
@@ -258,32 +252,25 @@ def main_app():
                         else:
                             st.error(message)
 
+    # Sidebar and logout
+    st.sidebar.title("Information")
+    st.sidebar.markdown("""
+    • Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor velit vitae justo finibus, at varius arcu facilisis.
+    
+    • Sed non risus magna. Duis sed felis vel nisi ultrices tincidunt. Vestibulum ante ipsum primis in faucibus orci.
+    
+    • Phasellus ullamcorper, magna in vestibulum elementum, eros urna vulputate nisl, at tincidunt erat augue vel eros.
+    
+    • Curabitur porta sapien ac neque consectetur, vel tempor mauris fringilla. Nulla facilisi. Donec ultrices urna vel.
+    
+    • Maecenas venenatis ante ut neque convallis, in eleifend magna tempus. Nunc feugiat nulla sit amet diam mattis.
+    """)
+    
+    if st.sidebar.button("Logout", on_click=_logout_cb):
+        pass
+
 # Main app flow
 if state.authenticated:
     main_app()
-    
-    # Add Lorem Ipsum bullets to sidebar
-    st.sidebar.title("Delsalg i korte træk.")
-    st.sidebar.markdown("""
-- **Et delsalg er et salg af en del af boligen** for at få glæde af sin friværdi uden likviditetsmæssig belastning.
-
-- Kunden modtager en **kontant udbetaling**, og GoodLife bliver **passiv medejer.**
-
-- **Når boligen sælges, får GoodLife sin andel af værdien**. Indtil da er der ingen løbende likviditetsbelastning for kunden.
-
-- Da det ikke er et lån, kræver det **ingen vurdering af kundens økonomi eller kreditvurdering**.
-
-- Kunden bliver boende og **bestemmer selv over boligen** – også hvornår den skal sælges.
-
-- **Kunden betaler leje for den solgte del**. Det sker gennem størrelsen på GoodLifes ejerandel ("med mursten").
-
-- Derfor er **GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.**  Udover ejerandelens størrelse i forbindelse med delsalget er der **ingen andre omkostninger til GoodLife.**
-
-
-    """)
-    
-    # Logout option
-    if st.sidebar.button("Logout", on_click=_logout_cb):
-        pass
 else:
     login_page()
