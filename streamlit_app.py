@@ -24,7 +24,8 @@ def display_header():
 
 display_header()
 
-# Updated Authentication using a callback
+# -------------------------------------------------------------------
+# Authentication (fixed: uses a form and st.form_submit_button)
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 if "password" not in st.session_state:
@@ -36,13 +37,20 @@ def login_callback():
     else:
         st.session_state["authenticated"] = False
 
-st.subheader("Login")
-st.text_input("Password", type="password", key="password")
-login_clicked = st.button("Login", on_click=login_callback)
+with st.form("login_form"):
+    st.subheader("Login")
+    st.text_input("Password", type="password", key="password")
+    # IMPORTANT: form_submit_button is required in forms
+    login_clicked = st.form_submit_button("Login", on_click=login_callback)
+
+# If login was just clicked but password is wrong, show error
 if login_clicked and not st.session_state["authenticated"]:
     st.error("Incorrect password!")
+
+# If user is still not authenticated, stop here
 if not st.session_state["authenticated"]:
     st.stop()
+# -------------------------------------------------------------------
 
 # Load JSON data
 with open(json_path, encoding="utf-8") as f:
@@ -133,8 +141,4 @@ if st.button("Beregn", type="primary", use_container_width=True):
         try:
             with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
                 server.starttls()
-                server.login(USERNAME, PASSWORD)
-                server.sendmail(sender_email, receiver_email, msg.as_string())
-            st.success("Email sent successfully!")
-        except Exception as e:
-            st.error(f"Failed to send email: {e}")
+                server
