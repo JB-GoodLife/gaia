@@ -252,12 +252,18 @@ if state.authenticated:
     # Add Lorem Ipsum bullets to sidebar
     st.sidebar.title("Information")
     st.sidebar.markdown("""
-- Et delsalg er et salg af en del af boligen for at få glæde af sin friværdi uden likviditetsmæssig belastning.  
-- Kunden modtager en kontant udbetaling, og GoodLife bliver passiv medejer.  
-- Når boligen sælges, får GoodLife sin andel af værdien. Indtil da er der ingen løbende likviditetsbelastning for kunden.  
-- Da det ikke er et lån, kræver det ingen vurdering af økonomien eller kreditvurdering.  
-- Kunden bliver boende og bestemmer selv over boligen – også hvornår den skal sælges.  
-- Kunden betaler leje for den solgte del. Det sker gennem ejerandelen ("med mursten") i stedet for med penge. Derfor er GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.
+- **Et delsalg er et salg af en del af boligen** for at få glæde af sin friværdi uden likviditetsmæssig belastning.
+
+- Kunden modtager en **kontant udbetaling**, og GoodLife bliver **passiv medejer.**
+
+- **Når boligen sælges, får GoodLife sin andel af værdien**. Indtil da er der ingen løbende likviditetsbelastning for kunden.
+
+- Da det ikke er et lån, kræver det **ingen vurdering af kundens økonomi eller kreditvurdering**.
+
+- Kunden bliver boende og **bestemmer selv over boligen** – også hvornår den skal sælges.
+
+- **Kunden betaler leje for den solgte del**. Det sker gennem ejerandelen ("med mursten") i stedet for med penge. Derfor er **GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.**
+
 
     """)
     
