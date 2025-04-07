@@ -141,4 +141,8 @@ if st.button("Beregn", type="primary", use_container_width=True):
         try:
             with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
                 server.starttls()
-                server
+                server.login(USERNAME, PASSWORD)
+                server.sendmail(sender_email, receiver_email, msg.as_string())
+            st.success("Email sent successfully!")
+        except Exception as e:
+            st.error(f"Failed to send email: {e}")
