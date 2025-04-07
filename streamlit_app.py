@@ -184,7 +184,10 @@ def main_app():
             )
         with col3:
         # Calculate button
-        submitted = st.form_submit_button("Beregning", on_click=_calculate_cb, args=(input_fields,))
+        submitted = st.form_submit_button(
+            "Beregning", 
+            on_click=_calculate_cb, 
+            args=(input_fields,)
             )            
 
     # Display calculation results if calculation is done
