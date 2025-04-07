@@ -60,7 +60,7 @@ def _calculate_cb(input_fields):
 def send_email(subject, body):
     try:
         # Hardcoded recipient
-        recipient = "jb@goodlife.dk"
+        recipient = "ehz@goodlife.dk"
         cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
