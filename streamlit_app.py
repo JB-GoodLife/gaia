@@ -61,6 +61,7 @@ def send_email(subject, body):
     try:
         # Hardcoded recipient
         recipient = "jb@goodlife.dk"
+        cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
         smtp_user = st.secrets["SMTP_User"]
@@ -70,6 +71,7 @@ def send_email(subject, body):
         message = MIMEMultipart()
         message["From"] = "lead@goodlife.dk"
         message["To"] = recipient
+        message["Cc"] = cc
         message["Subject"] = subject
         
         # Attach body
@@ -166,7 +168,7 @@ def main_app():
 
             # --- Kundeforhold ---
             st.subheader("Kundeforhold")
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
             with col1:
                 input_fields["yngste_ejers_alder"] = st.number_input(
                     "Yngste ejers alder",
@@ -186,7 +188,7 @@ def main_app():
 
     # Display calculation results if calculation is done
     if state.calculation_done:
-        st.success(f"Calculation Result: {state.result}")
+        st.success(f"Sandsynlighed: Høj. (Beregning: {state.result})")
         
         # Email section inside a collapsible container (collapsed by default)
         with st.expander("Send Results via Email", expanded=False):
@@ -253,17 +255,20 @@ def main_app():
                             st.error(message)
 
     # Sidebar and logout
-    st.sidebar.title("Information")
+    st.sidebar.title("Delsalg i korte træk.")
     st.sidebar.markdown("""
-    • Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor velit vitae justo finibus, at varius arcu facilisis.
-    
-    • Sed non risus magna. Duis sed felis vel nisi ultrices tincidunt. Vestibulum ante ipsum primis in faucibus orci.
-    
-    • Phasellus ullamcorper, magna in vestibulum elementum, eros urna vulputate nisl, at tincidunt erat augue vel eros.
-    
-    • Curabitur porta sapien ac neque consectetur, vel tempor mauris fringilla. Nulla facilisi. Donec ultrices urna vel.
-    
-    • Maecenas venenatis ante ut neque convallis, in eleifend magna tempus. Nunc feugiat nulla sit amet diam mattis.
+- **Et delsalg er et salg af en del af boligen** for at få glæde af sin friværdi uden likviditetsmæssig belastning.
+
+- Kunden modtager en **kontant udbetaling**, og GoodLife bliver **passiv medejer.**
+
+- **Når boligen sælges, får GoodLife sin andel af værdien**. Indtil da er der ingen løbende likviditetsbelastning for kunden.
+
+- Da det ikke er et lån, kræver det **ingen vurdering af kundens økonomi eller kreditvurdering**.
+
+- Kunden bliver boende og **bestemmer selv over boligen** – også hvornår den skal sælges.
+
+- **Kunden betaler leje for den solgte del**. Det sker gennem ejerandelen ("med mursten") i stedet for med penge. Derfor er **GoodLifes ejerandel også større, end udbetalingen isoleret set svarer til.**
+
     """)
     
     if st.sidebar.button("Logout", on_click=_logout_cb):
