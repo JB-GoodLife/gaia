@@ -48,7 +48,7 @@ def _logout_cb():
 def send_email(subject, body):
     try:
         # Hardcoded recipient
-        recipient = "ehz@goodlife.dk"
+        recipient = "jb@goodlife.dk"
         cc = "jb@goodlife.dk"
         
         # Get credentials from secrets
@@ -74,7 +74,7 @@ def send_email(subject, body):
         server.send_message(message)
         server.quit()
         
-        return True, f"Lead sendt til {recipient}!"
+        return True, f"Lead sendt til GoodLife!"
     except Exception as e:
         return False, f"Fejl i afsendelse af lead: {str(e)}"
 
