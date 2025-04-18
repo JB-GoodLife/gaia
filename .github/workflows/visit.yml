@@ -1,4 +1,4 @@
-name: Visit App with Playwright
+name: Visit Streamlit App
 
 on:
   workflow_dispatch:
@@ -23,15 +23,17 @@ jobs:
           npm install playwright
           npx playwright install --with-deps
 
-      - name: Visit site with Playwright
+      - name: Visit Streamlit app and print title
         run: |
           node -e "
             (async () => {
               const { chromium } = require('playwright');
               const browser = await chromium.launch();
               const page = await browser.newPage();
-              await page.goto('https://example.com');
-              console.log('Visited!');
+              await page.goto('https://your-streamlit-app-url.com');
+              await page.waitForTimeout(5000); // wait 5 seconds
+              const title = await page.title();
+              console.log('Page title:', title);
               await browser.close();
             })();
           "
