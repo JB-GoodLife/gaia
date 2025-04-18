@@ -1,0 +1,31 @@
+name: Visit App
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'  # Every 12 hours
+  workflow_dispatch:
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm install -D playwright
+          npx playwright install
+      - name: Launch headless browser to visit app
+        run: |
+          npx playwright chromium --headless --eval "
+            const { chromium } = require('playwright');
+            (async () => {
+              const browser = await chromium.launch();
+              const page = await browser.newPage();
+              await page.goto('https://your-app.streamlit.app/', { waitUntil: 'networkidle' });
+              console.log('Visited successfully');
+              await browser.close();
+            })();
+          "
