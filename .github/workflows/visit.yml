@@ -30,7 +30,7 @@ jobs:
               const { chromium } = require('playwright');
               const browser = await chromium.launch();
               const page = await browser.newPage();
-              await page.goto('https://your-streamlit-app-url.com');
+              await page.goto('https://projectgaia.streamlit.app/');
               await page.waitForTimeout(5000); // wait 5 seconds
               const title = await page.title();
               console.log('Page title:', title);
