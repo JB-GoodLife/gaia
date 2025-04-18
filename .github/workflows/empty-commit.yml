@@ -2,14 +2,17 @@ name: Scheduled Empty Commit
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every X hours
-  workflow_dispatch:  # Allows manual trigger too
+    - cron: '0 */3 * * *'  # change as needed
+  workflow_dispatch:
 
 jobs:
   empty_commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Make empty commit
@@ -17,4 +20,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit --allow-empty -m "Scheduled empty commit"
-          git push
+          git push origin HEAD:main
