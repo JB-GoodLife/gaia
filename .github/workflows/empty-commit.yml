@@ -2,7 +2,7 @@ name: Scheduled Empty Commit
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # change as needed
+    - cron: '0 */8 * * *'
   workflow_dispatch:
 
 jobs:
